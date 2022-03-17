@@ -11,14 +11,17 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     // Constants
     final int defaultTotalBricks = 45;
     final int defaultPlayerX = 280;
+    final int defaultPlayerY = 550;
     final int defaultBallPositionX = 120;
     final int defaultBallPositionY = 310;
     final int defaultBallXDirection = -1;
     final int defaultBallYDirection= -2;
     final int ballWidth = 15;
     final int ballHeight = 15;
+    final int paddleWidth = 100;
+    final int paddleHeight = 8;
 
-    final int moveStep = 20;
+    final int moveStep = 30 ;
     final Timer timer;
     final int delay = 7;
 
@@ -75,7 +78,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
         // the paddle
         g.setColor(Color.green);
-        g.fillRect(playerX, 550, 100, 8);
+        g.fillRect(playerX, defaultPlayerY, paddleWidth, paddleHeight);
 
         // the ball
         g.setColor(Color.yellow);
@@ -118,9 +121,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
         if (play) {
             Rectangle ballRect = new Rectangle(ballPositionX, ballPositionY, ballWidth, ballHeight);
-            Rectangle bordersRect = new Rectangle(playerX, 550, 100, 8);
-            if (ballRect.intersects(bordersRect)) {
+            Rectangle playersRect = new Rectangle(playerX, defaultPlayerY, 100, 8);
+            if (ballRect.intersects(playersRect)) {
+                System.out.println("playersRect.x : " + playersRect.x);
+                System.out.println("ballRect.x : " + ballRect.x);
                 ballYDirection = -ballYDirection;
+                ballXDirection = (int) (Math.abs(ballRect.x - playersRect.x) - (paddleWidth / 2)) / 20;
             }
 
             for (int i = 0; i < map.map.length; i++) {
