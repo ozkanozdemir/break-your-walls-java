@@ -99,6 +99,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
             confidenceTextColor = new Color(255, 255, 255, 255);
         }
 
+        // to start text
+        if (!play) {
+            g.setFont(new Font("serif", Font.BOLD, 20));
+            g.drawString("Press Enter to Start", 230, 350);
+        }
+
         // the ball fell
         if (ballPositionY > 570) {
             play = false;
@@ -123,8 +129,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
             Rectangle ballRect = new Rectangle(ballPositionX, ballPositionY, ballWidth, ballHeight);
             Rectangle playersRect = new Rectangle(playerX, defaultPlayerY, 100, 8);
             if (ballRect.intersects(playersRect)) {
-                System.out.println("playersRect.x : " + playersRect.x);
-                System.out.println("ballRect.x : " + ballRect.x);
                 ballYDirection = -ballYDirection;
                 ballXDirection = (int) (Math.abs(ballRect.x - playersRect.x) - (paddleWidth / 2)) / 20;
             }
@@ -137,8 +141,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
                         int brickWidth = map.brickWidth;
                         int brickHeight = map.brickHeight;
 
-                        Rectangle rect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
-                        Rectangle brickRect = rect;
+                        Rectangle brickRect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
 
                         if (ballRect.intersects(brickRect)) {
                             map.setBrickValue(0, i, j);
