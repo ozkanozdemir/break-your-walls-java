@@ -11,7 +11,7 @@ public class MapGenerator {
     public static int brickHeight;
 
     // tuğla rengi
-    private final Color brickColor = new Color(178, 46, 0, 255);
+    private final Color brickColor = new Color(147, 39, 1, 255);
 
     // Sınıfın ana fonksiyonu
     public MapGenerator(int row, int col) {

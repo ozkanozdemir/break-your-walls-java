@@ -14,9 +14,10 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     final int brickColumnCount = 8; // tuğla sütun sayısı
     final int defaultTotalBricks = brickRowCount * brickColumnCount; // varsayılan toplam tuğla sayısı
 
-    final int paddleWidth = 100; // Oyuncunun (küreğin) varsayılan genişliği
+    final int paddleWidth = 120; // Oyuncunun (küreğin) varsayılan genişliği
+    final int paddleHeight = 8; // Oyuncu (kürek) yüksekliği
     final int defaultPlayerX = (Main.DIM_WIDTH / 2) - (paddleWidth / 2); // oyuncunun varsayılan başlangıç pozisyonu - X : soldan px olarak uzaklığı
-    final int defaultPlayerY = Main.DIM_HEIGHT - 50; // oyuncunun varsayılan başlangıç pozisyonu - Y : yukarıdan px olarak uzaklığı
+    final int defaultPlayerY = Main.DIM_HEIGHT - 64; // oyuncunun varsayılan başlangıç pozisyonu - Y : yukarıdan px olarak uzaklığı
 
     final int defaultBallPositionX = 140; // Topun başlangıç pozisyonu - X : soldan px olarak uzaklığı
     final int defaultBallPositionY = Main.DIM_HEIGHT - 200; // Topun başlangıç pozisyonu - Y : yukarıdan px olarak uzaklığı
@@ -24,8 +25,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     final int defaultBallYDirection= -2; // Topun başlangıç dikey yönü
     final int ballWidth = 12; // Topun genişliği
     final int ballHeight = 12; // Topun yüksekliği
-
-    final int paddleHeight = 8; // Oyuncu (kürek) yüksekliği
 
     final int borderWidth = 4; // Pencerenin kenarlıklarının kalınlığı
 
@@ -48,8 +47,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     private int ballXDirection = defaultBallXDirection; // topun yatay yönü
     private int ballYDirection = defaultBallYDirection; // topun dikey yönü
 
-    final int moveStep = 30 ; // sağ sol ok tuşlarına basınca kaç px hareket edeceği
-    private Timer timer; // hareket sağlamak için zamanlayıcı
+    final int moveStep = 32 ; // sağ sol ok tuşlarına basınca kaç px hareket edeceği
+    private final Timer timer; // hareket sağlamak için zamanlayıcı
     private int delay = 7;
 
     // colors
@@ -130,11 +129,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
             // Oyunu kazandın yazısı
             g.setColor(infoTextColor);
             g.setFont(new Font("serif", Font.BOLD, 30));
-            g.drawString("You Won!!! The Score : " + score, (Main.DIM_WIDTH / 2 - (180)), (Main.DIM_HEIGHT / 2) + 30);
+            g.drawString("You Won \uD83D\uDE80 \uD83D\uDE80 \uD83D\uDE80", (Main.DIM_WIDTH / 2 - (120)), (Main.DIM_HEIGHT / 2) + 30);
+            g.drawString("The Score : " + score, (Main.DIM_WIDTH / 2 - (105)), (Main.DIM_HEIGHT / 2) + 70);
 
             // Oyuna yeniden başla yazısı
             g.setFont(new Font("serif", Font.BOLD, 20));
-            g.drawString("Press Enter to Restart", (Main.DIM_WIDTH / 2 - (100)), (Main.DIM_HEIGHT / 2) + 80);
+            g.drawString("Press Enter to Restart", (Main.DIM_WIDTH / 2 - (100)), (Main.DIM_HEIGHT / 2) + 110);
 
             // özgüven yazısının rengini değiştir
             confidenceTextColor = new Color(222, 222, 222, 222);
@@ -183,7 +183,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
             // topun fiziksel alanı
             Rectangle ballRect = new Rectangle(ballPositionX, ballPositionY, ballWidth, ballHeight);
             // oyuncunun (küreğin) fiziksel alanı
-            Rectangle playerRect = new Rectangle(playerX, defaultPlayerY, 100, 8);
+            Rectangle playerRect = new Rectangle(playerX, defaultPlayerY, paddleWidth, paddleHeight);
 
             // top ve oyuncu (kürek) birbirine temas ettiyse topun yönünü güncelle
             if (ballRect.intersects(playerRect)) {
@@ -411,6 +411,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         score = 0;
         totalBricks = defaultTotalBricks;
         confidenceTextColor = new Color(200, 200, 200, 60);
+        delay = 7;
+        timer.setDelay(delay);
 
         // tuğlaları oluştur
         map = new MapGenerator(brickRowCount, brickColumnCount);
