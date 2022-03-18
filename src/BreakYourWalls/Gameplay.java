@@ -10,8 +10,8 @@ import java.awt.event.KeyListener;
 public class Gameplay extends JPanel implements KeyListener, ActionListener {
     // Constants
     // Genişlik ve yükseklikler px cinsindendir
-    final int brickRowCount = 6; // tuğla satır sayısı
-    final int brickColumnCount = 9; // tuğla sütun sayısı
+    final int brickRowCount = 5; // tuğla satır sayısı
+    final int brickColumnCount = 8; // tuğla sütun sayısı
     final int defaultTotalBricks = brickRowCount * brickColumnCount; // varsayılan toplam tuğla sayısı
 
     final int paddleWidth = 100; // Oyuncunun (küreğin) varsayılan genişliği
@@ -28,10 +28,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     final int paddleHeight = 8; // Oyuncu (kürek) yüksekliği
 
     final int borderWidth = 4; // Pencerenin kenarlıklarının kalınlığı
-
-    final int moveStep = 30 ; // sağ sol ok tuşlarına basınca kaç px hareket edeceği
-    final Timer timer; // hareket sağlamak için zamanlayıcı
-    final int delay = 7;
 
     final int scoreStep = 5; // skor artış miktarı
 
@@ -52,8 +48,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     private int ballXDirection = defaultBallXDirection; // topun yatay yönü
     private int ballYDirection = defaultBallYDirection; // topun dikey yönü
 
+    final int moveStep = 30 ; // sağ sol ok tuşlarına basınca kaç px hareket edeceği
+    private Timer timer; // hareket sağlamak için zamanlayıcı
+    private int delay = 7;
+
     // colors
-    private Color confidenceTextColor = new Color(148, 148, 148, 60); // özgüven yazısının rengi
+    private Color confidenceTextColor = new Color(70, 68, 68, 60); // özgüven yazısının rengi
     public static Color bgColor = new Color(54, 52, 52); // arka plan rengi
     private final Color ballColor = new Color(220, 206, 206); // top rengi
     private final Color borderColor = new Color(0, 0, 0); // pencere kenarlığı rengi
@@ -63,11 +63,11 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     private final Color pauseTextColor = new Color(58, 182, 229); // bilgilendirme yazıları rengi
 
     // inputs
-    public static JButton saveButton = new JButton("Kaydet");
-    public static JTextArea tabu1 = new JTextArea("Tabunu yaz...");
-    public static JTextArea tabu2 = new JTextArea("Tabunu yaz...");
-    public static JTextArea tabu3 = new JTextArea("Tabunu yaz...");
-    public static JTextArea tabu4 = new JTextArea("Tabunu yaz...");
+//    public static JButton saveButton = new JButton("Kaydet");
+//    public static JTextArea tabu1 = new JTextArea("Tabunu yaz...");
+//    public static JTextArea tabu2 = new JTextArea("Tabunu yaz...");
+//    public static JTextArea tabu3 = new JTextArea("Tabunu yaz...");
+//    public static JTextArea tabu4 = new JTextArea("Tabunu yaz...");
 
     // tuğla oluşturucu sınıfı
     private MapGenerator map;
@@ -124,10 +124,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
         // bricks finished - tuğlaların hepsi yok edildi
         if (totalBricks <= 0) {
-            // oyun bitiş değikenlerini ayarla
+            // oyun bitiş değikenini ayarla
             play = false;
-            ballXDirection = 0;
-            ballYDirection = 0;
 
             // Oyunu kazandın yazısı
             g.setColor(infoTextColor);
@@ -152,16 +150,15 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         // oyunduraklatıldı yazısı
         if (play && paused) {
             g.setColor(pauseTextColor);
-            g.setFont(new Font("serif", Font.BOLD, 50));
-            g.drawString("paused", (Main.DIM_WIDTH / 2) - 80, (Main.DIM_HEIGHT / 2) + 40);
+            g.setFont(new Font("serif", Font.BOLD, 30));
+            g.drawString("paused", (Main.DIM_WIDTH / 2) - 40, (Main.DIM_HEIGHT / 2) + 40);
+            g.drawString("Press \"R\" for Restart Game", (Main.DIM_WIDTH / 2) - 180, (Main.DIM_HEIGHT / 2) + 90);
         }
 
         // top aşağı düştü - oyun bitti
         if (ballPositionY > defaultPlayerY + paddleHeight + borderWidth) {
-            // oyun bitiş değikenlerini ayarla
+            // oyun bitiş değikenini ayarla
             play = false;
-            ballXDirection = 0;
-            ballYDirection = 0;
 
             // oyun bitti yazısı
             g.setColor(infoTextColor);
@@ -305,21 +302,27 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         // restart the game - enter a basıldı
         // oyun başlamadıysa oyunu başlat ve başlangıç varsayılan değerlerini ayarla
         if (!play && e.getKeyCode() == KeyEvent.VK_ENTER) {
-            play = true;
-            ballPositionX = defaultBallPositionX;
-            ballPositionY = defaultBallPositionY;
-            ballXDirection = defaultBallXDirection;
-            ballYDirection = defaultBallYDirection;
-            playerX = defaultPlayerX;
-            score = 0;
-            totalBricks = defaultTotalBricks;
-            confidenceTextColor = new Color(200, 200, 200, 60);
+            restartGame();
+        }
 
-            // tuğlaları oluştur
-            map = new MapGenerator(brickRowCount, brickColumnCount);
+        // on press r - oyunu yeniden başlat - oyun durakladığında çalışır
+        if (e.getKeyCode() == KeyEvent.VK_R && paused) {
+            restartGame();
+        }
 
-            // yeniden boya
-            repaint();
+        // on press b - Hile :) - oyunu bitir
+        if (e.getKeyCode() == KeyEvent.VK_B && play) {
+            for (int i = 0; i < map.map.length; i++) {
+                for (int j = 0; j < map.map[0].length; j++) {
+                    if (map.map[i][j] > 0) {
+                        // tuğlanın çizimini kaldır
+                        map.setBrickValue(0, i, j);
+                    }
+                }
+            }
+            play = false;
+            totalBricks = 0;
+            score = 999;
         }
     }
 
@@ -352,13 +355,67 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
     // top oyuncuya (küreğe) temas ettiğinde topun yönünü güncellemek için çalışacak fonksiyon
     private void onBallTouchedPaddle(Rectangle ballRect, Rectangle playerRect) {
-        // TODO: topun yönünün güncellenmesini geliştir
+        // TODO: topun yönünün güncellenmesini geliştirilecek
         ballYDirection = -ballYDirection;
 
-//                double paddleTouchPoint = (double) Math.abs(ballRect.x - playersRect.x) / paddleWidth;
-//                ballXDirection = (int) Math.ceil(paddleTouchPoint * 5) - 3;
-//                System.out.println(ballXDirection);
+        // -3 ... +3
+        int touchedIndex = (int) Math.ceil(Math.abs(ballRect.x - playerRect.x) / (paddleWidth / 7.0f)) - 4;
+        // ballXDirection = touchedIndex;
 
-        ballXDirection = (Math.abs(ballRect.x - playerRect.x) - (paddleWidth / 2)) / 20;
+        // topun yönüne ve oyuncuya (küreğe) değdiği noktaya göre gitmesi gereken yeni yönü ayarla
+        if (touchedIndex == 0) {
+            ballXDirection = -ballXDirection;
+        } else if (touchedIndex < 0) {
+            ballXDirection = ballXDirection < 0 ? touchedIndex - ballXDirection : ballXDirection + touchedIndex;
+        } else {
+            ballXDirection = ballXDirection > 0 ? touchedIndex - ballXDirection : ballXDirection + touchedIndex;
+        }
+
+        // topun yönünü kendi belirlediğimiz sınırlar içinde tutalım
+        ballXDirection = Math.min(ballXDirection, 3);
+        ballXDirection = Math.max(ballXDirection, -3);
+
+        // topun yönüne göre delayi güncelle
+        switch (ballXDirection) {
+            case 0:
+                delay = 5;
+                break;
+            case -1:
+            case 1:
+                delay = 7;
+                break;
+            case -2:
+            case 2:
+                delay = 10;
+                break;
+            case -3:
+            case 3:
+                delay = 12;
+                break;
+            default:
+                delay = 6;
+                break;
+        }
+        timer.setDelay(delay);
+    }
+
+    // oyunu (yeniden) başlatma fonksiyonu
+    private void restartGame() {
+        play = true;
+        paused = false;
+        ballPositionX = defaultBallPositionX;
+        ballPositionY = defaultBallPositionY;
+        ballXDirection = defaultBallXDirection;
+        ballYDirection = defaultBallYDirection;
+        playerX = defaultPlayerX;
+        score = 0;
+        totalBricks = defaultTotalBricks;
+        confidenceTextColor = new Color(200, 200, 200, 60);
+
+        // tuğlaları oluştur
+        map = new MapGenerator(brickRowCount, brickColumnCount);
+
+        // yeniden boya
+        repaint();
     }
 }
