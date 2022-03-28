@@ -360,22 +360,22 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
         // -3 ... +3
         int touchedIndex = (int) Math.ceil(Math.abs(ballRect.x - playerRect.x) / (paddleWidth / 7.0f)) - 4;
-        // ballXDirection = touchedIndex;
+        ballXDirection = touchedIndex;
 
         // topun yönüne ve oyuncuya (küreğe) değdiği noktaya göre gitmesi gereken yeni yönü ayarla
-        if (touchedIndex == 0) {
-            ballXDirection = -ballXDirection;
-        } else if (touchedIndex < 0) {
-            ballXDirection = ballXDirection < 0 ? touchedIndex - ballXDirection : ballXDirection + touchedIndex;
-        } else {
-            ballXDirection = ballXDirection > 0 ? touchedIndex - ballXDirection : ballXDirection + touchedIndex;
-        }
+//        if (touchedIndex == 0) {
+//            ballXDirection = -ballXDirection;
+//        } else if (touchedIndex < 0) {
+//            ballXDirection = ballXDirection < 0 ? touchedIndex - ballXDirection : ballXDirection + touchedIndex;
+//        } else {
+//            ballXDirection = ballXDirection > 0 ? touchedIndex - ballXDirection : ballXDirection + touchedIndex;
+//        }
 
         // topun yönünü kendi belirlediğimiz sınırlar içinde tutalım
         ballXDirection = Math.min(ballXDirection, 3);
         ballXDirection = Math.max(ballXDirection, -3);
 
-        // topun yönüne göre delayi güncelle
+        // topun yönüne göre delayi (hızı) güncelle
         switch (ballXDirection) {
             case 0:
                 delay = 5;
@@ -401,6 +401,11 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
     // oyunu (yeniden) başlatma fonksiyonu
     private void restartGame() {
+        // tuğlaları oluştur
+        if (score > 0) {
+            map = new MapGenerator(brickRowCount, brickColumnCount);
+        }
+
         play = true;
         paused = false;
         ballPositionX = defaultBallPositionX;
@@ -413,9 +418,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         confidenceTextColor = new Color(200, 200, 200, 60);
         delay = 7;
         timer.setDelay(delay);
-
-        // tuğlaları oluştur
-        map = new MapGenerator(brickRowCount, brickColumnCount);
 
         // yeniden boya
         repaint();

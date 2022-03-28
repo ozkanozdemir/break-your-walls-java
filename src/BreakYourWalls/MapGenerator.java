@@ -1,6 +1,8 @@
 package BreakYourWalls;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapGenerator {
     // tuğlaların verilerini tutacak 2 boyutlu dizi - satır ve sütun şeklinde
@@ -11,7 +13,10 @@ public class MapGenerator {
     public static int brickHeight;
 
     // tuğla rengi
-    private final Color brickColor = new Color(147, 39, 1, 255);
+    private final int minBrickColor = 70;
+    private final int maxBrickColor = 255;
+    private List<Color> brickColors = new ArrayList<Color>();
+    // private final Color textColor = new Color(220, 220, 220);
 
     // Sınıfın ana fonksiyonu
     public MapGenerator(int row, int col) {
@@ -29,22 +34,39 @@ public class MapGenerator {
 
 //        brickWidth = 540 / col;
 //        brickHeight = 150 / row;
+
+        // Her satırın rengini ayarla
+        for (int i = 0; i < map.length; i++) {
+            brickColors.add(randomBrickColor());
+        }
     }
 
     // Tuğlaların çizimi
     public void draw(Graphics2D g) {
         for (int i = 0; i < map.length; i++) {
+            // Her satır için rastgele tuğla rengi belirle
+
             for (int j = 0; j < map[0].length; j++) {
                 if (map[i][j] > 0) {
+                    // position
+                    int xPosition = j * brickWidth + ((int) (Main.DIM_WIDTH * 0.2f) / 2);
+                    int yPosition = i * brickHeight + 50;
+
                     // Tuğlanın rengi
-                    g.setColor(brickColor);
-                    g.fillRect(j * brickWidth + ((int) (Main.DIM_WIDTH * 0.2f) / 2), i * brickHeight + 50, brickWidth, brickHeight);
+                    g.setColor(brickColors.get(i));
+                    g.fillRect(xPosition, yPosition, brickWidth, brickHeight);
 
                     // Tuğlanın etrafında 3 px'lik arka plan rengi veriyoruz
                     // Bu sayede aralarında boşluk varmış gibi görünecek
                     g.setStroke(new BasicStroke(3));
                     g.setColor(Gameplay.bgColor);
-                    g.drawRect(j * brickWidth + ((int) (Main.DIM_WIDTH * 0.2f) / 2), i * brickHeight + 50, brickWidth, brickHeight);
+                    g.drawRect(xPosition, yPosition, brickWidth, brickHeight);
+
+//                    if (tabus.length > (i * j) + j) {
+//                        g.setFont(new Font("serif", Font.BOLD, 12));
+//                        g.setColor(textColor);
+//                        g.drawString(tabus[(i * j) + j], xPosition + 8, yPosition + (brickHeight / 2) + 4);
+//                    }
                 }
             }
         }
@@ -54,5 +76,14 @@ public class MapGenerator {
     // Kendisine geken değeri (tuğlayı kaldırmak için 0 gelecek) map dizisindeki konumunu bulup ona o değeri atıyoruz
     public void setBrickValue(int value, int row, int col) {
         map[row][col] = value;
+    }
+
+    // Rastgele renk oluşturma
+    private Color randomBrickColor() {
+        return new Color(
+                minBrickColor + (int) (Math.random() * (maxBrickColor - minBrickColor)),
+                minBrickColor + (int) (Math.random() * (maxBrickColor - minBrickColor)),
+                minBrickColor + (int) (Math.random() * (maxBrickColor - minBrickColor))
+        );
     }
 }
