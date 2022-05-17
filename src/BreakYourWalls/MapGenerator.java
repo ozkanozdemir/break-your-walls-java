@@ -1,6 +1,9 @@
 package BreakYourWalls;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +15,9 @@ public class MapGenerator {
     public static int brickWidth;
     public static int brickHeight;
 
-    // tuğla rengi
-    private final int minBrickColor = 70;
-    private final int maxBrickColor = 255;
+    // tuğla renkleri
     private List<Color> brickColors = new ArrayList<Color>();
+
     // private final Color textColor = new Color(220, 220, 220);
 
     // Sınıfın ana fonksiyonu
@@ -28,7 +30,7 @@ public class MapGenerator {
             }
         }
 
-        // Frame'in genişlik ve yüksekliğine ve tuğlaların sayısına göre 1 adet tuğlanın genilik ve yüksekliğini ayarla
+        // Frame'in genişlik ve yüksekliğine ve tuğlaların sayısına göre 1 adet tuğlanın genişlik ve yüksekliğini ayarla
         brickWidth = (int) (Main.DIM_WIDTH * 0.8f) / col;
         brickHeight = (int) (Main.DIM_HEIGHT * 0.25f) / row;
 
@@ -37,7 +39,7 @@ public class MapGenerator {
 
         // Her satırın rengini ayarla
         for (int i = 0; i < map.length; i++) {
-            brickColors.add(randomBrickColor());
+            brickColors.add(MyColor.randomBrickColor());
         }
     }
 
@@ -73,17 +75,12 @@ public class MapGenerator {
     }
 
     // Gameplay sınıfından bir tuğlayı kaldırabilmek için kullanıyoruz
-    // Kendisine geken değeri (tuğlayı kaldırmak için 0 gelecek) map dizisindeki konumunu bulup ona o değeri atıyoruz
-    public void setBrickValue(int value, int row, int col) {
-        map[row][col] = value;
-    }
+    // Kendisine gelen değeri (tuğlayı kaldırmak için 0 gelecek) map dizisindeki konumunu bulup ona o değeri atıyoruz
+    public void setBrickValue(int value, int row, int col, boolean playSound) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        if (value == 0 && playSound) {
+            MyAudio.PlayAudio("src/BreakYourWalls/audio.wav");
+        }
 
-    // Rastgele renk oluşturma
-    private Color randomBrickColor() {
-        return new Color(
-                minBrickColor + (int) (Math.random() * (maxBrickColor - minBrickColor)),
-                minBrickColor + (int) (Math.random() * (maxBrickColor - minBrickColor)),
-                minBrickColor + (int) (Math.random() * (maxBrickColor - minBrickColor))
-        );
+        map[row][col] = value;
     }
 }

@@ -1,11 +1,14 @@
 package BreakYourWalls;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 public class Gameplay extends JPanel implements KeyListener, ActionListener {
     // Constants
@@ -49,7 +52,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 
     final int moveStep = 32 ; // sağ sol ok tuşlarına basınca kaç px hareket edeceği
     private final Timer timer; // hareket sağlamak için zamanlayıcı
-    private int delay = 7;
+    private int delay = 7; // Gecikme süresi
 
     // colors
     private Color confidenceTextColor = new Color(70, 68, 68, 60); // özgüven yazısının rengi
@@ -57,6 +60,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
     private final Color ballColor = new Color(220, 206, 206); // top rengi
     private final Color borderColor = new Color(0, 0, 0); // pencere kenarlığı rengi
     private final Color scoreColor = new Color(147, 145, 145); // skor rengi
+    private final Color levelColor = new Color(147, 145, 145); // level rengi
     private final Color infoTextColor = new Color(100, 197, 0); // bilgilendirme yazıları rengi
     private final Color paddleColor = new Color(0, 197, 139); // bilgilendirme yazıları rengi
     private final Color pauseTextColor = new Color(58, 182, 229); // bilgilendirme yazıları rengi
@@ -144,7 +148,9 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         if (!play && score == 0) {
             g.setColor(infoTextColor);
             g.setFont(new Font("serif", Font.BOLD, 30));
-            g.drawString("Press Enter to Start", (Main.DIM_WIDTH / 2 - (120)), (Main.DIM_HEIGHT / 2) + 40);
+            g.drawString("Use left / right arrows", (Main.DIM_WIDTH / 2 - (130)), (Main.DIM_HEIGHT / 2));
+            g.drawString("Press esc for pause", (Main.DIM_WIDTH / 2 - (124)), (Main.DIM_HEIGHT / 2 + 40));
+            g.drawString("Press Enter to Start", (Main.DIM_WIDTH / 2 - (120)), (Main.DIM_HEIGHT / 2) + 80);
         }
 
         // oyunduraklatıldı yazısı
@@ -206,7 +212,15 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
                         // top bir tuğlaya temas etti
                         if (ballRect.intersects(brickRect)) {
                             // tuğlanın çizimini kaldır
-                            map.setBrickValue(0, i, j);
+                            try {
+                                map.setBrickValue(0, i, j, true);
+                            } catch (UnsupportedAudioFileException ex) {
+                                ex.printStackTrace();
+                            } catch (LineUnavailableException ex) {
+                                ex.printStackTrace();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
 
                             // toplam tuğla sayısını azalt
                             totalBricks--;
@@ -223,13 +237,13 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
                                 if (!ballXDirectionUpdating) {
                                     ballXDirectionUpdating = true;
                                     ballXDirection = -ballXDirection;
-                                    setTimeout(() -> ballXDirectionUpdating = false, 33);
+                                    Helper.setTimeout(() -> ballXDirectionUpdating = false, 33);
                                 }
                             } else {
                                 if (!ballYDirectionUpdating) {
                                     ballYDirectionUpdating = true;
                                     ballYDirection = -ballYDirection;
-                                    setTimeout(() -> ballYDirectionUpdating = false, 33);
+                                    Helper.setTimeout(() -> ballYDirectionUpdating = false, 33);
                                 }
                             }
 
@@ -263,7 +277,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         // Yeniden boya
         repaint();
     }
-
 
     @Override // üst sınıftaki methodun üzerine yazılıyor
     public void keyTyped(KeyEvent e) {}
@@ -316,7 +329,15 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
                 for (int j = 0; j < map.map[0].length; j++) {
                     if (map.map[i][j] > 0) {
                         // tuğlanın çizimini kaldır
-                        map.setBrickValue(0, i, j);
+                        try {
+                            map.setBrickValue(0, i, j, false);
+                        } catch (UnsupportedAudioFileException ex) {
+                            ex.printStackTrace();
+                        } catch (LineUnavailableException ex) {
+                            ex.printStackTrace();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }
@@ -338,19 +359,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         play = true;
         paused = false;
         playerX -= moveStep;
-    }
-
-    // setTimeout function as js setTimeout
-    public static void setTimeout(Runnable runnable, int delay){
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
-                runnable.run();
-            }
-            catch (Exception e){
-                System.err.println(e);
-            }
-        }).start();
     }
 
     // top oyuncuya (küreğe) temas ettiğinde topun yönünü güncellemek için çalışacak fonksiyon
