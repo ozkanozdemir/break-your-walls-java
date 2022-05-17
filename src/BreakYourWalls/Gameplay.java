@@ -214,11 +214,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
                             // tuğlanın çizimini kaldır
                             try {
                                 map.setBrickValue(0, i, j, true);
-                            } catch (UnsupportedAudioFileException ex) {
-                                ex.printStackTrace();
-                            } catch (LineUnavailableException ex) {
-                                ex.printStackTrace();
-                            } catch (IOException ex) {
+                            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
                                 ex.printStackTrace();
                             }
 
@@ -331,11 +327,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
                         // tuğlanın çizimini kaldır
                         try {
                             map.setBrickValue(0, i, j, false);
-                        } catch (UnsupportedAudioFileException ex) {
-                            ex.printStackTrace();
-                        } catch (LineUnavailableException ex) {
-                            ex.printStackTrace();
-                        } catch (IOException ex) {
+                        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -367,8 +359,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
         ballYDirection = -ballYDirection;
 
         // -3 ... +3
-        int touchedIndex = (int) Math.ceil(Math.abs(ballRect.x - playerRect.x) / (paddleWidth / 7.0f)) - 4;
-        ballXDirection = touchedIndex;
+        ballXDirection = (int) Math.ceil(Math.abs(ballRect.x - playerRect.x) / (paddleWidth / 7.0f)) - 4;
 
         // topun yönüne ve oyuncuya (küreğe) değdiği noktaya göre gitmesi gereken yeni yönü ayarla
 //        if (touchedIndex == 0) {
