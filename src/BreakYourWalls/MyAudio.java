@@ -10,26 +10,27 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class MyAudio {
-    // to store current position
-    Long currentFrame;
+    // Çalınacak ses
     static Clip clip;
 
+    // Stream objesi
     static AudioInputStream audioInputStream;
 
     public static void PlayAudio(String filePath)
             throws UnsupportedAudioFileException,
             IOException, LineUnavailableException
     {
-        // create AudioInputStream object
+        // Ses dosyasından stream objesini oluştur
         audioInputStream =
                 AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
 
-        // create clip reference
+        // Clip objesi
         clip = AudioSystem.getClip();
 
-        // open audioInputStream to the clip
+        // clip objesi ile stream edilen objeyi aç
         clip.open(audioInputStream);
 
+        // Ek döngü sayısı
         clip.loop(0);
     }
 }
